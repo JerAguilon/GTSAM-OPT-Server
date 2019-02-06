@@ -17,6 +17,9 @@ import numpy as np
 
 import gtsam
 
+from models.example_output import PlanarSlamOutput
+
+
 # Create noise models
 PRIOR_NOISE = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.3, 0.3, 0.1]))
 ODOMETRY_NOISE = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.2, 0.2, 0.1]))
@@ -77,6 +80,15 @@ def run():
 
     # Calculate and print marginal covariances for all variables
     marginals = gtsam.Marginals(graph, result)
+    covariance_dict = {}
+
     for (key, str) in [(X1, "X1"), (X2, "X2"), (X3, "X3"), (L1, "L1"), (L2, "L2")]:
-        print("{} covariance:\n{}\n".format(str, marginals.marginalCovariance(key)))
+        covariance = marginals.marginalCovariance(key)
+        print("{} covariance:\n{}\n".format(str, covariance))
+        covariance_dict[str] = covariance
+
+    return PlanarSlamOutput(
+        result=result,
+        covariance=covariance_dict,
+    )
 
