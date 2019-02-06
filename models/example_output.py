@@ -1,3 +1,13 @@
+def X(i):
+    """Create key for pose i."""
+    return int(gtsam.symbol(ord('x'), i))
+
+
+def L(j):
+    """Create key for landmark j."""
+    return int(gtsam.symbol(ord('l'), j))
+
+
 class PlanarSlamOutput(object):
     def __init__(self, result, covariance):
         self.result = result
