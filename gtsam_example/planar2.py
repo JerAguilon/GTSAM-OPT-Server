@@ -20,16 +20,28 @@ import gtsam
 from models.example_output import PlanarSlamOutput
 
 
-# Create noise models
-PRIOR_NOISE = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.3, 0.3, 0.1]))
-ODOMETRY_NOISE = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.2, 0.2, 0.1]))
-MEASUREMENT_NOISE = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.1, 0.2]))
-
 # Create an empty nonlinear factor graph
-def run():
+def run(
+    prior_noise=[.3, .3, .1],
+    odometry_noise=[.2, .2, .1],
+    measurement_noise=[.1, .2],
+    symbols = { 'x1', 'x2', 'x3', 'l4', 'l5' },
+    priors = { 'x1': [0, 0, 0] },
+
+):
+    prior_noise = gtsam.noiseModel_Diagonal.Sigmas(np.array(prior_noise))
+    odometry_noise = gtsam.noiseModel_Diagonal.Sigmas(np.array(odometry_noise))
+    measurement_noise = gtsam.noiseModel_Diagonal.Sigmas(np.array(measurement_noise))
+
     graph = gtsam.NonlinearFactorGraph()
 
     # Create the keys corresponding to unknown variables in the factor graph
+    unknowns = {}
+    for symbol in symbols:
+        assert len(symbol) == 2
+        var = gtsam.symbol(ord(symbol[0]), int(symbol[1]))
+        unknowns[symbol] = var
+
     X1 = gtsam.symbol(ord('x'), 1)
     X2 = gtsam.symbol(ord('x'), 2)
     X3 = gtsam.symbol(ord('x'), 3)
@@ -37,21 +49,22 @@ def run():
     L2 = gtsam.symbol(ord('l'), 5)
 
     # Add a prior on pose X1 at the origin. A prior factor consists of a mean and a noise model
-    graph.add(gtsam.PriorFactorPose2(X1, gtsam.Pose2(0.0, 0.0, 0.0), PRIOR_NOISE))
+    for key, value in priors.iteritems():
+        graph.add(gtsam.PriorFactorPose2(unknowns[key], gtsam.Pose2(*value), prior_noise))
 
     # Add odometry factors between X1,X2 and X2,X3, respectively
     graph.add(gtsam.BetweenFactorPose2(
-        X1, X2, gtsam.Pose2(2.0, 0.0, 0.0), ODOMETRY_NOISE))
+        X1, X2, gtsam.Pose2(2.0, 0.0, 0.0), odometry_noise))
     graph.add(gtsam.BetweenFactorPose2(
-        X2, X3, gtsam.Pose2(2.0, 0.0, 0.0), ODOMETRY_NOISE))
+        X2, X3, gtsam.Pose2(2.0, 0.0, 0.0), odometry_noise))
 
     # Add Range-Bearing measurements to two different landmarks L1 and L2
     graph.add(gtsam.BearingRangeFactor2D(
-        X1, L1, gtsam.Rot2.fromDegrees(45), np.sqrt(4.0+4.0), MEASUREMENT_NOISE))
+        X1, L1, gtsam.Rot2.fromDegrees(45), np.sqrt(4.0+4.0), measurement_noise))
     graph.add(gtsam.BearingRangeFactor2D(
-        X2, L1, gtsam.Rot2.fromDegrees(90), 2.0, MEASUREMENT_NOISE))
+        X2, L1, gtsam.Rot2.fromDegrees(90), 2.0, measurement_noise))
     graph.add(gtsam.BearingRangeFactor2D(
-        X3, L2, gtsam.Rot2.fromDegrees(90), 2.0, MEASUREMENT_NOISE))
+        X3, L2, gtsam.Rot2.fromDegrees(90), 2.0, measurement_noise))
 
     # Print graph
     print("Factor Graph:\n{}".format(graph))
@@ -82,10 +95,10 @@ def run():
     marginals = gtsam.Marginals(graph, result)
     covariance_dict = {}
 
-    for (key, str) in [(X1, "X1"), (X2, "X2"), (X3, "X3"), (L1, "L1"), (L2, "L2")]:
+    for (key, string) in [(X1, "X1"), (X2, "X2"), (X3, "X3"), (L1, "L1"), (L2, "L2")]:
         covariance = marginals.marginalCovariance(key)
-        print("{} covariance:\n{}\n".format(str, covariance))
-        covariance_dict[str] = covariance
+        print("{} covariance:\n{}\n".format(string, covariance))
+        covariance_dict[string] = covariance
 
     return PlanarSlamOutput(
         result=result,
