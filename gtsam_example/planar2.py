@@ -25,7 +25,28 @@ def run(
     prior_noise=[.3, .3, .1],
     odometry_noise=[.2, .2, .1],
     measurement_noise=[.1, .2],
-    symbols = { 'x1', 'x2', 'x3', 'l4', 'l5' },
+    symbols = {
+        'x1': {
+            'estimate': [-.25, .20, .15],
+            'type': 'pose'
+        },
+        'x2': {
+            'estimate': [2.30, .10, -.20],
+            'type': 'pose'
+        },
+        'x3': {
+            'estimate': [4.10, .10, .10],
+            'type': 'pose'
+        },
+        'l4': {
+            'estimate': [1.80, 2.10],
+            'type': 'point'
+        },
+        'l5': {
+            'estimate': [4.10, 1.80],
+            'type': 'point'
+        }
+    },
     priors = { 'x1': [0, 0, 0] },
     between_pose_factors = [
         {
@@ -35,6 +56,23 @@ def run(
         {
             'connections': ['x2', 'x3'],
             'pose': [2, 0, 0]
+        },
+    ],
+    bearing_range_factors = [
+        {
+            'connections': ['x1', 'l4'],
+            'bearing': 45,
+            'range': np.sqrt(4.0 + 4.0),
+        },
+        {
+            'connections': ['x2', 'l4'],
+            'bearing': 90,
+            'range': 2,
+        },
+        {
+            'connections': ['x3', 'l5'],
+            'bearing': 90,
+            'range': 2,
         },
     ]
 
@@ -47,7 +85,7 @@ def run(
 
     # Create the keys corresponding to unknown variables in the factor graph
     unknowns = {}
-    for symbol in symbols:
+    for symbol in symbols.keys():
         assert len(symbol) == 2
         var = gtsam.symbol(ord(symbol[0]), int(symbol[1]))
         unknowns[symbol] = var
@@ -69,24 +107,28 @@ def run(
         graph.add(gtsam.BetweenFactorPose2(
             var1, var2, gtsam.Pose2(*factor['pose']), odometry_noise))
 
-    # Add Range-Bearing measurements to two different landmarks L1 and L2
-    graph.add(gtsam.BearingRangeFactor2D(
-        X1, L1, gtsam.Rot2.fromDegrees(45), np.sqrt(4.0+4.0), measurement_noise))
-    graph.add(gtsam.BearingRangeFactor2D(
-        X2, L1, gtsam.Rot2.fromDegrees(90), 2.0, measurement_noise))
-    graph.add(gtsam.BearingRangeFactor2D(
-        X3, L2, gtsam.Rot2.fromDegrees(90), 2.0, measurement_noise))
+    for factor in bearing_range_factors:
+        var1 = unknowns[factor['connections'][0]]
+        var2 = unknowns[factor['connections'][1]]
+        bearing = factor['bearing']
+        range = factor['range']
+        graph.add(gtsam.BearingRangeFactor2D(
+            var1, var2, gtsam.Rot2.fromDegrees(bearing), range, measurement_noise))
 
     # Print graph
     print("Factor Graph:\n{}".format(graph))
 
     # Create (deliberately inaccurate) initial estimate
     initial_estimate = gtsam.Values()
-    initial_estimate.insert(X1, gtsam.Pose2(-0.25, 0.20, 0.15))
-    initial_estimate.insert(X2, gtsam.Pose2(2.30, 0.10, -0.20))
-    initial_estimate.insert(X3, gtsam.Pose2(4.10, 0.10, 0.10))
-    initial_estimate.insert(L1, gtsam.Point2(1.80, 2.10))
-    initial_estimate.insert(L2, gtsam.Point2(4.10, 1.80))
+    for key, value in symbols.iteritems():
+        variable = unknowns[key]
+        if value['type'] == 'pose':
+            pose = gtsam.Pose2(*value['estimate'])
+        elif value['type'] == 'point':
+            pose = gtsam.Point2(*value['estimate'])
+        else:
+            raise Exception("Invalid type")
+        initial_estimate.insert(variable, pose)
 
     # Print
     print("Initial Estimate:\n{}".format(initial_estimate))
