@@ -27,6 +27,16 @@ def run(
     measurement_noise=[.1, .2],
     symbols = { 'x1', 'x2', 'x3', 'l4', 'l5' },
     priors = { 'x1': [0, 0, 0] },
+    between_pose_factors = [
+        {
+            'connections': ['x1', 'x2'],
+            'pose': [2, 0, 0]
+        },
+        {
+            'connections': ['x2', 'x3'],
+            'pose': [2, 0, 0]
+        },
+    ]
 
 ):
     prior_noise = gtsam.noiseModel_Diagonal.Sigmas(np.array(prior_noise))
@@ -53,10 +63,11 @@ def run(
         graph.add(gtsam.PriorFactorPose2(unknowns[key], gtsam.Pose2(*value), prior_noise))
 
     # Add odometry factors between X1,X2 and X2,X3, respectively
-    graph.add(gtsam.BetweenFactorPose2(
-        X1, X2, gtsam.Pose2(2.0, 0.0, 0.0), odometry_noise))
-    graph.add(gtsam.BetweenFactorPose2(
-        X2, X3, gtsam.Pose2(2.0, 0.0, 0.0), odometry_noise))
+    for factor in between_pose_factors:
+        var1 = unknowns[factor['connections'][0]]
+        var2 = unknowns[factor['connections'][1]]
+        graph.add(gtsam.BetweenFactorPose2(
+            var1, var2, gtsam.Pose2(*factor['pose']), odometry_noise))
 
     # Add Range-Bearing measurements to two different landmarks L1 and L2
     graph.add(gtsam.BearingRangeFactor2D(
