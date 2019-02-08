@@ -17,8 +17,8 @@ class SlamForm extends Component {
         this.state = {
             numPoses: 3,
             numLandmarks: 2,
-            betweenFactors: 2,
-            measurementFactors: 3,
+            numBetweenFactors: 2,
+            numMeasurementFactors: 3,
         };
         this.addPose = this.addPose.bind(this);
         this.addLandmark = this.addLandmark.bind(this);
@@ -66,8 +66,10 @@ class SlamForm extends Component {
                 </div>
 
                 <h4>Between Factors</h4>
+                {this.getBetweenFactors()}
 
                 <h4>Measurement Factors</h4>
+                {this.getMeasurementFactors()}
 
                 <button type="submit" disabled={pristine || invalid}>
                   Submit
@@ -90,6 +92,44 @@ class SlamForm extends Component {
         );
     }
 
+    getBetweenFactors() {
+        let numBetweenFactors = this.state.numBetweenFactors;
+        let output = []
+        for (let i = 0; i < numBetweenFactors; i++) {
+            let varId = i + 1;
+            let name = 'betweeen' + varId.toString();
+            let new_component = (
+                <div>
+                  <label>{name}</label>
+                  <Field name={name + "X"} component="input" placeholder="x" />
+                  <Field name={name + "Y"} component="input" placeholder="y" />
+                  <Field name={name + "Theta"} component="input" placeholder="theta" />
+                </div>
+
+            );
+            output.push(new_component);
+        };
+        return output;
+    }
+
+    getMeasurementFactors() {
+        let numMeasurementFactors = this.state.numMeasurementFactors;
+        let output = []
+        for (let i = 0; i < numMeasurementFactors; i++) {
+            let varId = i + 1;
+            let name = 'measurement' + varId.toString();
+            let new_component = (
+                <div>
+                  <label>{name}</label>
+                  <Field name={name + "Bearing"} component="input" placeholder="bearing" />
+                  <Field name={name + "Range"} component="input" placeholder="range" />
+                </div>
+
+            );
+            output.push(new_component);
+        };
+        return output;
+    }
 
     getPoses() {
         let numPoses = this.state.numPoses;
