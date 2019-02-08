@@ -9,7 +9,6 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const onSubmit = async values => {
     await sleep(300);
     window.alert(JSON.stringify(values, 0, 2));
-
 }
 
 class SlamForm extends Component {
@@ -18,7 +17,11 @@ class SlamForm extends Component {
         this.state = {
             numPoses: 3,
             numLandmarks: 2,
+            betweenFactors: 2,
+            measurementFactors: 3,
         };
+        this.addPose = this.addPose.bind(this);
+        this.addLandmark = this.addLandmark.bind(this);
     }
 
     render() {
@@ -28,9 +31,43 @@ class SlamForm extends Component {
             render={({ handleSubmit, pristine, invalid }) => (
               <form onSubmit={handleSubmit}>
                 <h2>Arguments</h2>
+                <h4>Noise</h4>
+                <div>
+                  <label>Prior Noise</label>
+                  <Field name={"priorNoiseX"} component="input" placeholder="x" />
+                  <Field name={"priorNoiseY"} component="input" placeholder="y" />
+                  <Field name={"priorNoiseTheta"} component="input" placeholder="theta" />
+                </div>
+                <div>
+                  <label>Odometry Noise</label>
+                  <Field name={"odometryNoiseX"} component="input" placeholder="x" />
+                  <Field name={"odometryNoiseY"} component="input" placeholder="y" />
+                  <Field name={"odometryNoiseTheta"} component="input" placeholder="theta" />
+                </div>
+                <div>
+                  <label>Measurement Noise</label>
+                  <Field name={"measurementNoiseBearing"} component="input" placeholder="bearing" />
+                  <Field name={"measurementNoiseRange"} component="input" placeholder="range" />
+                </div>
+
+
+                <h4>Variables and Initial Estimates</h4>
                 {this.getPoses()}
                 {this.getLandmarks()}
+                <button type="button" onClick={this.addPose}>Add Pose</button>
+                <button type="button" onClick={this.addLandmark}>Add Landmark</button>
 
+                <h4>X1 Prior Estimate</h4>
+                <div>
+                  <label>Prior</label>
+                  <Field name={"priorX"} component="input" placeholder="x" />
+                  <Field name={"priorY"} component="input" placeholder="y" />
+                  <Field name={"priorTheta"} component="input" placeholder="theta" />
+                </div>
+
+                <h4>Between Factors</h4>
+
+                <h4>Measurement Factors</h4>
 
                 <button type="submit" disabled={pristine || invalid}>
                   Submit
@@ -41,6 +78,19 @@ class SlamForm extends Component {
         );
     }
 
+    addPose() {
+        this.setState(
+            { numPoses: this.state.numPoses + 1 }
+        );
+    }
+
+    addLandmark() {
+        this.setState(
+            { numLandmarks: this.state.numLandmarks + 1 }
+        );
+    }
+
+
     getPoses() {
         let numPoses = this.state.numPoses;
         let output = []
@@ -50,9 +100,9 @@ class SlamForm extends Component {
             let new_component = (
                 <div>
                   <label>{name}</label>
-                  <Field name={name + "_x"} component="input" placeholder="x" />
-                  <Field name={name + "_y"} component="input" placeholder="y" />
-                  <Field name={name + "_theta"} component="input" placeholder="theta" />
+                  <Field name={name + "X"} component="input" placeholder="x" />
+                  <Field name={name + "Y"} component="input" placeholder="y" />
+                  <Field name={name + "Theta"} component="input" placeholder="theta" />
                 </div>
 
             );
