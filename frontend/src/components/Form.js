@@ -16,8 +16,8 @@ class SlamForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            num_poses: 2,
-            num_landmarks: 0,
+            numPoses: 3,
+            numLandmarks: 2,
         };
     }
 
@@ -29,6 +29,7 @@ class SlamForm extends Component {
               <form onSubmit={handleSubmit}>
                 <h2>Arguments</h2>
                 {this.getPoses()}
+                {this.getLandmarks()}
 
 
                 <button type="submit" disabled={pristine || invalid}>
@@ -41,7 +42,7 @@ class SlamForm extends Component {
     }
 
     getPoses() {
-        let numPoses = this.state.num_poses;
+        let numPoses = this.state.numPoses;
         let output = []
         for (let i = 0; i < numPoses; i++) {
             let varId = i + 1;
@@ -58,7 +59,25 @@ class SlamForm extends Component {
             output.push(new_component);
         };
         return output;
+    }
 
+    getLandmarks() {
+        let numLandmarks = this.state.numLandmarks;
+        let output = []
+        for (let i = 0; i < numLandmarks; i++) {
+            let varId = i + 1;
+            let name = 'l' + varId.toString();
+            let new_component = (
+                <div>
+                  <label>{name}</label>
+                  <Field name={name + "_x"} component="input" placeholder="x" />
+                  <Field name={name + "_y"} component="input" placeholder="y" />
+                </div>
+
+            );
+            output.push(new_component);
+        };
+        return output;
     }
 
 }
