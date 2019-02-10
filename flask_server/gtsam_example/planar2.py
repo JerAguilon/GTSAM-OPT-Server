@@ -71,20 +71,33 @@ def run(slam_request=DEFAULT_REQUEST):
 
 
     output_estimations = {}
-    i = 1
-    while result.exists(X(i)):
-        key = "x" + str(i)
-        pose = result.atPose2(X(i))
-        estimation = [pose.x(), pose.y(), pose.theta()]
-        output_estimations[key] = estimation
-        i += 1
+    # i = 1
+    for variable, initial_estimate in slam_request.initial_estimates.iteritems():
+        if type(initial_estimate) == gtsam.Pose2:
+            pose = result.atPose2(variable)
+            estimation = [pose.x(), pose.y(), pose.theta()]
+            output_estimations[variable] = estimation
+        elif type(initial_estimate) == gtsam.Point2:
+            point = result.atPoint2(variable)
+            estimation = [point.x(), point.y()]
+            output_estimations[variable] = estimation
+        else:
+            raise Exception("Unsupported type: " + type(variable))
 
-    while result.exists(L(i)):
-        key = "l" + str(i)
-        point = result.atPoint2(L(i))
-        estimation = [point.x(), point.y()]
-        output_estimations[key] = estimation
-        i += 1
+
+    # while result.exists(X(i)):
+    #     key = "x" + str(i)
+    #     pose = result.atPose2(X(i))
+    #     estimation = [pose.x(), pose.y(), pose.theta()]
+    #     output_estimations[key] = estimation
+    #     i += 1
+
+    # while result.exists(L(i)):
+    #     key = "l" + str(i)
+    #     point = result.atPoint2(L(i))
+    #     estimation = [point.x(), point.y()]
+    #     output_estimations[key] = estimation
+    #     i += 1
 
     # Calculate and print marginal covariances for all variables
     marginals = gtsam.Marginals(graph, result)

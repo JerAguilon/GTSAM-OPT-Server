@@ -11,7 +11,21 @@ const onSubmit = async values => {
     window.alert(JSON.stringify(values, 0, 2));
 }
 
+const INITIAL_VALUES =  {
+    'priors': [
+        {
+            'key': 'x1',
+        }
+    ]
+}
+
+
+
 class SlamForm extends Component {
+    async onValidate(values) {
+        this.props.formUpdateCallback(values);
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -20,76 +34,78 @@ class SlamForm extends Component {
             numBetweenFactors: 2,
             numMeasurementFactors: 3,
         };
-        this.addPose = this.addPose.bind(this);
-        this.addLandmark = this.addLandmark.bind(this);
+        this.addCount = this.addCount.bind(this);
+        this.onValidate = this.onValidate.bind(this);
     }
 
     render() {
         return (
           <Form
+            initialValues={INITIAL_VALUES}
             onSubmit={onSubmit}
+            validate={this.onValidate}
             render={({ handleSubmit, pristine, invalid }) => (
               <form onSubmit={handleSubmit}>
                 <h2>Arguments</h2>
                 <h4>Noise</h4>
                 <div>
                   <label>Prior Noise</label>
-                  <Field name={"priorNoiseX"} component="input" placeholder="x" />
-                  <Field name={"priorNoiseY"} component="input" placeholder="y" />
-                  <Field name={"priorNoiseTheta"} component="input" placeholder="theta" />
+                  <Field name={"priorNoise[0]"} component="input" placeholder="x" />
+                  <Field name={"priorNoise[1]"} component="input" placeholder="y" />
+                  <Field name={"priorNoise[2]"} component="input" placeholder="theta" />
                 </div>
                 <div>
                   <label>Odometry Noise</label>
-                  <Field name={"odometryNoiseX"} component="input" placeholder="x" />
-                  <Field name={"odometryNoiseY"} component="input" placeholder="y" />
-                  <Field name={"odometryNoiseTheta"} component="input" placeholder="theta" />
+                  <Field name={"odometryNoise[0]"} component="input" placeholder="x" />
+                  <Field name={"odometryNoise[1]"} component="input" placeholder="y" />
+                  <Field name={"odometryNoise[2]"} component="input" placeholder="theta" />
                 </div>
                 <div>
                   <label>Measurement Noise</label>
-                  <Field name={"measurementNoiseBearing"} component="input" placeholder="bearing" />
-                  <Field name={"measurementNoiseRange"} component="input" placeholder="range" />
+                  <Field name={"measurementNoise[0]"} component="input" placeholder="bearing" />
+                  <Field name={"measurementNoise[1]"} component="input" placeholder="range" />
                 </div>
 
 
                 <h4>Variables and Initial Estimates</h4>
                 {this.getPoses()}
                 {this.getLandmarks()}
-                <button type="button" onClick={this.addPose}>Add Pose</button>
-                <button type="button" onClick={this.addLandmark}>Add Landmark</button>
+                <button type="button" onClick={(e) => this.addCount('numPoses')}>Add Pose</button>
+                <button type="button" onClick={(e) => this.addCount('numLandmarks')}>Add Landmark</button>
+
 
                 <h4>X1 Prior Estimate</h4>
                 <div>
                   <label>Prior</label>
-                  <Field name={"priorX"} component="input" placeholder="x" />
-                  <Field name={"priorY"} component="input" placeholder="y" />
-                  <Field name={"priorTheta"} component="input" placeholder="theta" />
+                  <Field name={"priors[0].prior[0]"} component="input" placeholder="x" />
+                  <Field name={"priors[0].prior[1]"} component="input" placeholder="y" />
+                  <Field name={"priors[0].prior[2]"} component="input" placeholder="theta" />
                 </div>
 
                 <h4>Between Factors</h4>
                 {this.getBetweenFactors()}
+                <button type="button" onClick={(e) => this.addCount('numBetweenFactors')}>Add Between Factor</button>
 
                 <h4>Measurement Factors</h4>
                 {this.getMeasurementFactors()}
+                <button type="button" onClick={(e) => this.addCount('numMeasurementFactors')}>Add Measurement Factor</button>
 
-                <button type="submit" disabled={pristine || invalid}>
-                  Submit
-                </button>
+                <div>
+                    <button type="submit" disabled={pristine || invalid}>
+                      Submit
+                    </button>
+                </div>
               </form>
             )}
           />
         );
     }
 
-    addPose() {
+    addCount(key) {
         this.setState(
-            { numPoses: this.state.numPoses + 1 }
+            { [key]: this.state[key] + 1 }
         );
-    }
-
-    addLandmark() {
-        this.setState(
-            { numLandmarks: this.state.numLandmarks + 1 }
-        );
+        this.forceUpdate()
     }
 
     getBetweenFactors() {
@@ -97,13 +113,14 @@ class SlamForm extends Component {
         let output = []
         for (let i = 0; i < numBetweenFactors; i++) {
             let varId = i + 1;
-            let name = 'betweeen' + varId.toString();
+            let name = 'betweeenPoseFactors[' + varId.toString() + ']';
             let new_component = (
-                <div>
-                  <label>{name}</label>
-                  <Field name={name + "X"} component="input" placeholder="x" />
-                  <Field name={name + "Y"} component="input" placeholder="y" />
-                  <Field name={name + "Theta"} component="input" placeholder="theta" />
+                <div key={i.toString()}>
+                  <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
+                  <Field name={name + ".connections[1]"} component="input" placeholder="var2" />
+                  <Field name={name + ".pose[0]"} component="input" placeholder="x" />
+                  <Field name={name + ".pose[1]"} component="input" placeholder="y" />
+                  <Field name={name + ".pose[2]"} component="input" placeholder="theta" />
                 </div>
 
             );
@@ -117,12 +134,18 @@ class SlamForm extends Component {
         let output = []
         for (let i = 0; i < numMeasurementFactors; i++) {
             let varId = i + 1;
-            let name = 'measurement' + varId.toString();
+            let name = 'bearingRangeFactors.[' + varId.toString() + ']';
             let new_component = (
-                <div>
-                  <label>{name}</label>
-                  <Field name={name + "Bearing"} component="input" placeholder="bearing" />
-                  <Field name={name + "Range"} component="input" placeholder="range" />
+                <div key={i.toString()}>
+                  <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
+                  <Field name={name + ".connections[1]"} component="input" placeholder="var2" />
+                  <Field
+                    name={name + ".bearing"}
+                    component="input"
+                    placeholder="bearing"
+                    allowNull="false"
+                  />
+                  <Field name={name + "range"} component="input" placeholder="range" />
                 </div>
 
             );
@@ -136,9 +159,9 @@ class SlamForm extends Component {
         let output = []
         for (let i = 0; i < numPoses; i++) {
             let varId = i + 1;
-            let name = 'x' + varId.toString();
+            let name = 'symbols[' + varId.toString() + ']';
             let new_component = (
-                <div>
+                <div key={i.toString()}>
                   <label>{name}</label>
                   <Field name={name + "X"} component="input" placeholder="x" />
                   <Field name={name + "Y"} component="input" placeholder="y" />
@@ -158,10 +181,10 @@ class SlamForm extends Component {
             let varId = i + 1;
             let name = 'l' + varId.toString();
             let new_component = (
-                <div>
+                <div key={i.toString()}>
                   <label>{name}</label>
-                  <Field name={name + "_x"} component="input" placeholder="x" />
-                  <Field name={name + "_y"} component="input" placeholder="y" />
+                  <Field name={name + "X"} component="input" placeholder="x" />
+                  <Field name={name + "Y"} component="input" placeholder="y" />
                 </div>
 
             );

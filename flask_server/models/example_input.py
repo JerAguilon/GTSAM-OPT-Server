@@ -113,7 +113,7 @@ class SLAMRequest(object):
             between_pose_factors.append(factor)
 
 
-        bearing_range_factors_request = request['bearingRangeFactors']
+        bearing_range_factors_request = request['bearing_range_factors']
         bearing_range_factors = []
         for factor in bearing_range_factors_request:
             var1 = unknowns[factor['connections'][0]]

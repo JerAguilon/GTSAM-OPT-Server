@@ -5,7 +5,17 @@ import SlamForm from './components/Form'
 
 import './App.css';
 
+const FORM_KEYS = {
+
+}
+
+
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.handleFormCallback = this.handleFormCallback.bind(this);
+  }
+
   render() {
     return (
       <div className="App">
@@ -18,10 +28,16 @@ class App extends Component {
           >
             Learn React
           </a>
-          <SlamForm />
+          <SlamForm
+            formUpdateCallback={this.handleFormCallback}
+          />
         </header>
       </div>
     );
+  }
+
+  handleFormCallback(values) {
+    console.log(values);
   }
 }
 
