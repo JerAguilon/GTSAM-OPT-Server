@@ -13,31 +13,31 @@ const FORM_KEYS = {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.handleFormCallback = this.handleFormCallback.bind(this);
+    this.handleFormUpdateCallback = this.handleFormUpdateCallback.bind(this);
+    this.handleFormSubmitCallback = this.handleFormSubmitCallback.bind(this);
   }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
           <SlamForm
-            formUpdateCallback={this.handleFormCallback}
+            formUpdateCallback={this.handleFormUpdateCallback}
+            formSubmitCallback={this.handleFormSubmitCallback}
           />
         </header>
       </div>
     );
   }
 
-  handleFormCallback(values) {
-    console.log(values);
+  handleFormSubmitCallback(response) {
+      console.log("SUBMITTED");
+      console.log(response);
+  }
+
+  handleFormUpdateCallback(values) {
+      console.log("Updated");
+      console.log(values);
   }
 }
 

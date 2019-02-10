@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Resource, Api
 from webargs.flaskparser import use_args
 
@@ -14,10 +15,13 @@ class CustomApi(Api):
             if e.code == 422 and 'messages' in e.data:
                 data = e.data['messages']
                 return self.make_response(data, 422)
-        return self.make_response(e.data, 500)
+        if hasattr(e, 'data'):
+            return self.make_response(e.data, 500)
+        return super(CustomApi, self).handle_error(e)
 
 
 app = Flask(__name__)
+CORS(app)
 
 api = CustomApi(app)
 
@@ -29,7 +33,8 @@ class SlamExample(Resource):
     )
     def post(self, args):
         request = SLAMRequest.from_request(args)
-        return planar2.run(request).serialize()
+        result = planar2.run(request).serialize()
+        return result
 
 api.add_resource(SlamExample, '/')
 
