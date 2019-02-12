@@ -3,7 +3,7 @@ import logo from './logo.svg';
 
 import SlamForm from './components/Form'
 
-import './App.css';
+import './css/App.css';
 
 const DEFAULT_STATE = {
     isResult:false,
@@ -49,7 +49,7 @@ class App extends Component {
             if (response.result[key].length === 2) {
               landmarks.push(
                 {
-                  name: key,
+                  id: key,
                   x: response.result[key][0],
                   y: response.result[key][1],
                 }
@@ -57,7 +57,7 @@ class App extends Component {
             } else {
               poses.push(
                 {
-                  name: key,
+                  id: key,
                   x: response.result[key][0],
                   y: response.result[key][1],
                   theta: response.result[key][2],
@@ -86,7 +86,7 @@ class App extends Component {
             if (value.type === 'pose') {
               landmarks.push(
                 {
-                  name: value.key,
+                  id: value.key,
                   x: value.estimate[0],
                   y: value.estimate[1],
                 }
@@ -94,7 +94,7 @@ class App extends Component {
             } else {
               poses.push(
                 {
-                  name: value.key,
+                  id: value.key,
                   x: value.estimate[0],
                   y: value.estimate[1],
                   theta: value.estimate[2],

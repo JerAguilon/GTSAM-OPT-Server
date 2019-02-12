@@ -197,9 +197,11 @@ class SlamForm extends Component {
                 <h2>Arguments</h2>
                 <h4>Noise</h4>
                 <div>
-                  <label>Prior Noise</label>
+                  <label>x</label>
                   <Field name={"priorNoise[0]"} component="input" placeholder="x" />
+                  <label>y</label>
                   <Field name={"priorNoise[1]"} component="input" placeholder="y" />
+                  <label>theta</label>
                   <Field name={"priorNoise[2]"} component="input" placeholder="theta" />
                 </div>
                 <div>
