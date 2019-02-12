@@ -1,9 +1,13 @@
 .App {
     margin-right: auto;
-    width: 50%;
     margin-left: auto;
 }
 
 .input-field > label {
     position: inherit;
+}
+
+.content-container {
+    height: 1000px;
+    overflow-y: scroll;
 }
