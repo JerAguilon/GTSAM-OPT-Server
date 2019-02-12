@@ -123,6 +123,19 @@ const INITIAL_VALUES =  {
 
 class SlamForm extends Component {
     async onValidate(values) {
+        for (let i = 0; i < values.symbols.length; i++) {
+            let key = "";
+            let type = "";
+            if (values.symbols[i].estimate.length === 3) {
+                key = "x" + (i + 1).toString();
+                type = "pose";
+            } else {
+                key = "l" + (i + 1).toString();
+                type = "point";
+            }
+            values.symbols[i].key = key
+            values.symbols[i].type = type
+        }
         this.props.formUpdateCallback(values);
         return [];
     }
