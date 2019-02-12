@@ -3,3 +3,7 @@
     width: 50%;
     margin-left: auto;
 }
+
+.input-field > label {
+    position: inherit;
+}

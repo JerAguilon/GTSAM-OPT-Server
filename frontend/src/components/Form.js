@@ -188,66 +188,99 @@ class SlamForm extends Component {
         let poses = this.getPoses();
         let landmarks = this.getLandmarks(poses.length);
         return (
-          <Form
-            initialValues={INITIAL_VALUES}
-            onSubmit={this.onSubmit}
-            validate={this.onValidate}
-            render={({ handleSubmit, pristine, invalid }) => (
-              <form onSubmit={handleSubmit}>
-                <h2>Arguments</h2>
-                <h4>Noise</h4>
-                <div>
-                  <label>x</label>
-                  <Field name={"priorNoise[0]"} component="input" placeholder="x" />
-                  <label>y</label>
-                  <Field name={"priorNoise[1]"} component="input" placeholder="y" />
-                  <label>theta</label>
-                  <Field name={"priorNoise[2]"} component="input" placeholder="theta" />
-                </div>
-                <div>
-                  <label>Odometry Noise</label>
-                  <Field name={"odometryNoise[0]"} component="input" placeholder="x" />
-                  <Field name={"odometryNoise[1]"} component="input" placeholder="y" />
-                  <Field name={"odometryNoise[2]"} component="input" placeholder="theta" />
-                </div>
-                <div>
-                  <label>Measurement Noise</label>
-                  <Field name={"measurementNoise[0]"} component="input" placeholder="bearing" />
-                  <Field name={"measurementNoise[1]"} component="input" placeholder="range" />
-                </div>
+          <div className="row">
+              <Form
+                className="col s12"
+                initialValues={INITIAL_VALUES}
+                onSubmit={this.onSubmit}
+                validate={this.onValidate}
+                render={({ handleSubmit, pristine, invalid }) => (
+                  <form onSubmit={handleSubmit}>
+                    <h2>Arguments</h2>
+                    <h4>Noise</h4>
+                    <div className="row">
+                      <h5>Prior Noise</h5>
+                      <div className="input-field col s4">
+                          <Field name={"priorNoise[0]"} component="input" placeholder="x" />
+                          <label for={"priorNoise[0]"}>x</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"priorNoise[1]"} component="input" placeholder="y" />
+                          <label>y</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"priorNoise[2]"} component="input" placeholder="theta" />
+                          <label>theta</label>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <h5>Prior Noise</h5>
+                      <div className="input-field col s4">
+                          <Field name={"odometryNoise[0]"} component="input" placeholder="x" />
+                          <label>x</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"odometryNoise[1]"} component="input" placeholder="y" />
+                          <label>y</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"odometryNoise[2]"} component="input" placeholder="theta" />
+                          <label>theta</label>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <h5>Prior Noise</h5>
+                      <div className="input-field col s4">
+                          <Field name={"measurementNoise[0]"} component="input" placeholder="bearing" />
+                          <label>bearing</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"measurementNoise[1]"} component="input" placeholder="range" />
+                          <label>range</label>
+                      </div>
+                    </div>
 
 
-                <h4>Variables and Initial Estimates</h4>
-                {poses}
-                {landmarks}
-                <button type="button" onClick={(e) => this.addCount('numPoses')}>Add Pose</button>
-                <button type="button" onClick={(e) => this.addCount('numLandmarks')}>Add Landmark</button>
+                    <h4>Variables and Initial Estimates</h4>
+                    {poses}
+                    {landmarks}
+                    <button type="button" onClick={(e) => this.addCount('numPoses')}>Add Pose</button>
+                    <button type="button" onClick={(e) => this.addCount('numLandmarks')}>Add Landmark</button>
 
 
-                <h4>X1 Prior Estimate</h4>
-                <div>
-                  <label>Prior</label>
-                  <Field name={"priors[0].prior[0]"} component="input" placeholder="x" />
-                  <Field name={"priors[0].prior[1]"} component="input" placeholder="y" />
-                  <Field name={"priors[0].prior[2]"} component="input" placeholder="theta" />
-                </div>
+                    <div className="row">
+                      <h4>X1 Prior Estimate</h4>
+                      <div className="input-field col s4">
+                          <Field name={"priors[0].prior[0]"} component="input" placeholder="x" />
+                          <label>x</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"priors[0].prior[1]"} component="input" placeholder="y" />
+                          <label>y</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={"priors[0].prior[2]"} component="input" placeholder="theta" />
+                          <label>theta</label>
+                      </div>
+                    </div>
 
-                <h4>Between Factors</h4>
-                {this.getBetweenFactors()}
-                <button type="button" onClick={(e) => this.addCount('numBetweenFactors')}>Add Between Factor</button>
+                    <h4>Between Factors</h4>
+                    {this.getBetweenFactors()}
+                    <button type="button" onClick={(e) => this.addCount('numBetweenFactors')}>Add Between Factor</button>
 
-                <h4>Measurement Factors</h4>
-                {this.getMeasurementFactors()}
-                <button type="button" onClick={(e) => this.addCount('numMeasurementFactors')}>Add Measurement Factor</button>
+                    <h4>Measurement Factors</h4>
+                    {this.getMeasurementFactors()}
+                    <button type="button" onClick={(e) => this.addCount('numMeasurementFactors')}>Add Measurement Factor</button>
 
-                <div>
-                    <button type="submit" disabled={invalid}>
-                      Submit
-                    </button>
-                </div>
-              </form>
-            )}
-          />
+                    <div>
+                        <button type="submit" disabled={invalid}>
+                          Submit
+                        </button>
+                    </div>
+                  </form>
+                )}
+              />
+            </div>
         );
     }
 
@@ -265,13 +298,33 @@ class SlamForm extends Component {
             let varId = i;
             let name = 'betweenPoseFactors[' + varId.toString() + ']';
             let new_component = (
-                <div key={i.toString()}>
-                  <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
-                  <Field name={name + ".connections[1]"} component="input" placeholder="var2" />
-                  <Field name={name + ".pose[0]"} component="input" placeholder="x" />
-                  <Field name={name + ".pose[1]"} component="input" placeholder="y" />
-                  <Field name={name + ".pose[2]"} component="input" placeholder="theta" />
-                </div>
+                <>
+                   <h5>Between Factor {(i + 1).toString()}</h5>
+                    <div key={i.toString()} className="row">
+                      <div className="input-field col s6">
+                          <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
+                          <label>Variable 1</label>
+                      </div>
+                      <div className="input-field col s6">
+                          <Field name={name + ".connections[1]"} component="input" placeholder="var2" />
+                          <label>Variable 2</label>
+                      </div>
+                    </div>
+                    <div key={i.toString()} className="row">
+                      <div className="input-field col s4">
+                          <Field name={name + ".pose[0]"} component="input" placeholder="x" />
+                          <label>x</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={name + ".pose[1]"} component="input" placeholder="y" />
+                          <label>y</label>
+                      </div>
+                      <div className="input-field col s4">
+                          <Field name={name + ".pose[2]"} component="input" placeholder="theta" />
+                          <label>theta</label>
+                      </div>
+                    </div>
+                </>
 
             );
             output.push(new_component);
@@ -286,17 +339,34 @@ class SlamForm extends Component {
             let varId = i;
             let name = 'bearingRangeFactors.[' + varId.toString() + ']';
             let new_component = (
-                <div key={i.toString()}>
-                  <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
-                  <Field name={name + ".connections[1]"} component="input" placeholder="var2" />
-                  <Field
-                    name={name + ".bearing"}
-                    component="input"
-                    placeholder="bearing"
-                    allowNull="false"
-                  />
-                  <Field name={name + "range"} component="input" placeholder="range" />
-                </div>
+                <>
+                    <h5>Measurement {(i + 1).toString()}</h5>
+                    <div key={i.toString()} className="row">
+                      <div className="input-field col s6">
+                          <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
+                          <label for={name + ".connections[0]"}>Variable 1</label>
+                      </div>
+                      <div className="input-field col s6">
+                          <Field name={name + ".connections[1]"} component="input" placeholder="var2" />
+                          <label>Variable 2</label>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="input-field col s6">
+                          <Field
+                            name={name + ".bearing"}
+                            component="input"
+                            placeholder="bearing"
+                            allowNull="false"
+                          />
+                          <label for={name + ".bearing"}>Bearing</label>
+                      </div>
+                      <div className="input-field col s6">
+                          <Field name={name + ".range"} component="input" placeholder="range" />
+                          <label for={name + ".range"}>Range</label>
+                      </div>
+                    </div>
+                </>
 
             );
             output.push(new_component);
@@ -312,10 +382,13 @@ class SlamForm extends Component {
             let name = 'symbols[' + varId.toString() + ']';
             let new_component = (
                 <div key={i.toString()}>
-                  <label>x{i + 1}</label>
+                  <h5>Pose <code>x{i + 1}</code></h5>
                   <Field name={name + ".estimate[0]"} component="input" placeholder="x" />
+                  <label>x</label>
                   <Field name={name + ".estimate[1]"} component="input" placeholder="y" />
+                  <label>y</label>
                   <Field name={name + ".estimate[2]"} component="input" placeholder="theta" />
+                  <label>theta</label>
                 </div>
 
             );
@@ -332,8 +405,10 @@ class SlamForm extends Component {
             let name = 'symbols[' + varId.toString() + ']';
             let new_component = (
                 <div key={i.toString()}>
-                  <label>l{i+1}</label>
+                  <h5>Landmark <code>l{i + 1}</code></h5>
+                  <label>x</label>
                   <Field name={name + ".estimate[0]"} component="input" placeholder="x" />
+                  <label>y</label>
                   <Field name={name + ".estimate[1]"} component="input" placeholder="y" />
                 </div>
 
