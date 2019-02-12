@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { render } from 'react-dom';
-import { Form, Field } from 'react-final-form';
+import { Form, Field, FormSpy } from 'react-final-form';
 
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -123,6 +123,7 @@ const INITIAL_VALUES =  {
 
 class SlamForm extends Component {
     async onValidate(values) {
+        console.log(values);
         for (let i = 0; i < values.symbols.length; i++) {
             let key = "";
             let type = "";
@@ -187,6 +188,7 @@ class SlamForm extends Component {
     render() {
         let poses = this.getPoses();
         let landmarks = this.getLandmarks(poses.length);
+        let formChangeCallback = this.onValidate
         return (
           <div className="row">
               <Form
@@ -277,6 +279,12 @@ class SlamForm extends Component {
                           Submit
                         </button>
                     </div>
+                    <FormSpy onChange={
+                        (state => {
+                            console.log("FORM CHANGED");
+                            this.onValidate(state.values);
+                        })
+                    } />
                   </form>
                 )}
               />

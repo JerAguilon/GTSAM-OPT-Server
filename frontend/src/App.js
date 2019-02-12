@@ -3,18 +3,17 @@ import logo from "./logo.svg";
 
 import SlamForm from "./components/Form";
 import Graph from "./components/Graph";
-import SampleGraph from "./components/SampleGraph";
 
 import "./css/App.css";
 
 const DEFAULT_STATE = {
     isResult: false,
     landmarks: [
-        { name: "x1", x: -0.25, y: 0.2 },
-        { name: "x2", x: 2.3, y: 0.1 },
-        { name: "x3", x: 4.1, y: 0.1 }
+        { id: "x1", x: -0.25, y: 0.2 },
+        { id: "x2", x: 2.3, y: 0.1 },
+        { id: "x3", x: 4.1, y: 0.1 }
     ],
-    poses: [{ name: "l4", x: 1.8, y: 2.1 }, { name: "l5", x: 4.1, y: 1.8 }]
+    poses: [{ id: "l4", x: 1.8, y: 2.1 }, { id: "l5", x: 4.1, y: 1.8 }]
 };
 
 class App extends Component {
@@ -48,7 +47,6 @@ class App extends Component {
     }
 
     handleFormSubmitCallback(response) {
-        console.log(response);
         let landmarks = [];
         let poses = [];
         Object.keys(response.result).forEach(function(key) {
@@ -90,7 +88,7 @@ class App extends Component {
                 landmarks.push({
                     id: value.key,
                     x: value.estimate[0],
-                    y: value.estimate[1]
+                    y: value.estimate[1],
                 });
             }
         });
