@@ -3,17 +3,38 @@ import { Sigma, RandomizeNodePositions, RelativeSize } from "react-sigma";
 
 class UpdateNodeProps extends React.Component {
   componentWillReceiveProps({ sigma, nodes }) {
-    sigma.graph.nodes().forEach(n => {
-      console.log("FINDING " + n.id);
-      var updated = nodes.find(e => e.id == n.id)
-      console.log("UPDATED!");
-      console.log(updated);
-      Object.assign(n, updated)
-    });
+    for (let i = 0; i < nodes.length; i++) {
+
+        let graphNodes = sigma.graph.nodes()
+        let found = false
+        for (let j = 0; j < graphNodes.length; j++) {
+            if (graphNodes[j].id == nodes[i].id) {
+                Object.assign(graphNodes[j], nodes[i])
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            console.log("FOO");
+            console.log(nodes[i]);
+            sigma.graph.addNode(nodes[i]);
+        }
+
+    }
+    // sigma.graph.nodes().forEach(n => {
+    //   var updated = nodes.find(e => e.id == n.id)
+    //   Object.assign(n, updated)
+    // });
     sigma.refresh()
   }
-
   render = () => null
+}
+
+class MyCustomSigma extends React.Component {
+	constructor(props) {
+		super(props)
+		props.sigma.graph.addNode({id:"n3", label:props.label})
+	}
 }
 
 let GLOBAL_GRAPH = {
@@ -32,8 +53,6 @@ class Graph extends Component {
     }
 
     render() {
-        console.log("PROPERTIES: ");
-        console.log(this.props);
         let landmarks = this.props.landmarks.slice();
         let poses = this.props.poses.slice();
         let graph = {
