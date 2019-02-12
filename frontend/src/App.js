@@ -35,6 +35,7 @@ class App extends Component {
                     <Graph
                         landmarks={this.state.landmarks}
                         poses={this.state.poses}
+                        edges={this.state.edges}
                         isResult={this.state.isResult}
                     />
                     <SlamForm
@@ -76,6 +77,7 @@ class App extends Component {
     handleFormUpdateCallback(values) {
         let landmarks = [];
         let poses = [];
+        let edges = [];
         values.symbols.forEach(function(value) {
             if (value.type === "pose") {
                 poses.push({
@@ -92,10 +94,29 @@ class App extends Component {
                 });
             }
         });
+
+        let index = 0;
+        values.betweenPoseFactors.forEach(function(value) {
+            let source = value.connections[0];
+            let target = value.connections[1];
+            let eid = "e" + index.toString();
+            edges.push({source: source, target: target, id: eid});
+            index += 1;
+        });
+
+        values.bearingRangeFactors.forEach(function(value) {
+            let source = value.connections[0];
+            let target = value.connections[1];
+            let eid = "e" + index.toString();
+            edges.push({source: source, target: target, id: eid});
+            index += 1;
+        });
+
         this.setState({
             isResult: false,
             landmarks: landmarks,
-            poses: poses
+            poses: poses,
+            edges: edges,
         });
         this.forceUpdate();
     }

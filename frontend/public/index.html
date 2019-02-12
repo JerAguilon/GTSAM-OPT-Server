@@ -32,20 +32,19 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
       <style>
         #graph-container {
-          height: 300px;
-        outline: black;
-            margin-left:-100px;
-                margin-right:100px;
-                    margin-top:75px
+          position:absolute;
+          height: 100%;
+          width: 50%;
+          outline: black;
+          margin:auto
         }
       </style>
 
-    <div class="container content-container">
-        <div class="row">
-            <div id="graph-container" class="col s6">
-        </div>
-        <div id="root" class="col s6"></div>
-    </div>
+      <div id="graph-container"></div>
+      <div class="row">
+          <div class="col s6"></div>
+          <div id="root" class="col s6 margin-"></div>
+      </div>
     <script>
 /**
  * This is a basic example on how to instantiate sigma. A random graph is

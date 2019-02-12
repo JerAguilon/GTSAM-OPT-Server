@@ -8,6 +8,20 @@
 }
 
 .content-container {
-    height: 1000px;
+    height: 900px;
     overflow-y: scroll;
+    padding-right:15px;
+    border: 1px black;
+}
+
+.content-container > .row {
+    width: inherit;
+} 
+
+#root {
+    height: 900px;
+    overflow-y: scroll;
+    padding-right:100px;
+    padding-left: 100px;
+    border: 1px black;
 }
