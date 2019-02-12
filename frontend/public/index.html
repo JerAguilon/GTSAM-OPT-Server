@@ -65,8 +65,11 @@ var i,
 // Generate a random graph:
 // Instantiate sigma:
 s = new sigma({
-  graph: g,
-  container: 'graph-container'
+    graph: g,
+    container: 'graph-container',
+    settings: {
+        labelThreshold: 5,
+    },
 });
 </script>
         </div>

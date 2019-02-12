@@ -55,13 +55,13 @@ class App extends Component {
                 landmarks.push({
                     id: key,
                     x: response.result[key][0],
-                    y: response.result[key][1]
+                    y: -response.result[key][1]
                 });
             } else {
                 poses.push({
                     id: key,
                     x: response.result[key][0],
-                    y: response.result[key][1],
+                    y: -response.result[key][1],
                     theta: response.result[key][2]
                 });
             }
@@ -83,14 +83,14 @@ class App extends Component {
                 poses.push({
                     id: value.key,
                     x: value.estimate[0],
-                    y: value.estimate[1],
+                    y: -value.estimate[1],
                     theta: value.estimate[2]
                 });
             } else {
                 landmarks.push({
                     id: value.key,
                     x: value.estimate[0],
-                    y: value.estimate[1],
+                    y: -value.estimate[1],
                 });
             }
         });
