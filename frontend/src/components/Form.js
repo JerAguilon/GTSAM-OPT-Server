@@ -216,7 +216,7 @@ class SlamForm extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <h5>Prior Noise</h5>
+                      <h5>Odometry Noise</h5>
                       <div className="input-field col s4">
                           <Field name={"odometryNoise[0]"} component="input" placeholder="x" />
                           <label>x</label>
@@ -231,7 +231,7 @@ class SlamForm extends Component {
                       </div>
                     </div>
                     <div className="row">
-                      <h5>Prior Noise</h5>
+                      <h5>Measurement Noise</h5>
                       <div className="input-field col s4">
                           <Field name={"measurementNoise[0]"} component="input" placeholder="bearing" />
                           <label>bearing</label>
