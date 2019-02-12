@@ -2,39 +2,37 @@ import React, { Component } from "react";
 import { Sigma, RandomizeNodePositions, RelativeSize } from "react-sigma";
 
 class UpdateNodeProps extends React.Component {
-  componentWillReceiveProps({ sigma, nodes }) {
-    for (let i = 0; i < nodes.length; i++) {
-
-        let graphNodes = sigma.graph.nodes()
-        let found = false
-        for (let j = 0; j < graphNodes.length; j++) {
-            if (graphNodes[j].id == nodes[i].id) {
-                Object.assign(graphNodes[j], nodes[i])
-                found = true;
-                break;
+    componentWillReceiveProps({ sigma, nodes }) {
+        for (let i = 0; i < nodes.length; i++) {
+            let graphNodes = sigma.graph.nodes();
+            let found = false;
+            for (let j = 0; j < graphNodes.length; j++) {
+                if (graphNodes[j].id == nodes[i].id) {
+                    Object.assign(graphNodes[j], nodes[i]);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                console.log("FOO");
+                console.log(nodes[i]);
+                sigma.graph.addNode(nodes[i]);
             }
         }
-        if (!found) {
-            console.log("FOO");
-            console.log(nodes[i]);
-            sigma.graph.addNode(nodes[i]);
-        }
-
+        // sigma.graph.nodes().forEach(n => {
+        //   var updated = nodes.find(e => e.id == n.id)
+        //   Object.assign(n, updated)
+        // });
+        sigma.refresh();
     }
-    // sigma.graph.nodes().forEach(n => {
-    //   var updated = nodes.find(e => e.id == n.id)
-    //   Object.assign(n, updated)
-    // });
-    sigma.refresh()
-  }
-  render = () => null
+    render = () => null;
 }
 
 class MyCustomSigma extends React.Component {
-	constructor(props) {
-		super(props)
-		props.sigma.graph.addNode({id:"n3", label:props.label})
-	}
+    constructor(props) {
+        super(props);
+        props.sigma.graph.addNode({ id: "n3", label: props.label });
+    }
 }
 
 let GLOBAL_GRAPH = {
@@ -58,15 +56,33 @@ class Graph extends Component {
         let graph = {
             nodes: poses.concat(landmarks)
         };
-        return (<>
+
+        graph.nodes.forEach(node => {
+            node.label = node.id;
+            let nodeType = node.id;
+            if (nodeType && nodeType.charAt(0) == "x") {
+                node.color = this.props.isResult ? "#7FFF00" : "#8B0000";
+            }
+        });
+
+        console.log("graph shows");
+        console.log(graph);
+
+        return (
             <Sigma
                 graph={GLOBAL_GRAPH}
-                settings={{ drawEdges: false, clone: false, minNodeSize: 10 }}
+                renderer="svg"
+                settings={{
+                    clone: false,
+                    minNodeSize: 10,
+                    defaultNodeColor: "#003366",
+                    sideMargin: 1
+                }}
             >
                 <RelativeSize initialSize={10} />
                 <UpdateNodeProps nodes={graph.nodes} />
             </Sigma>
-        </>);
+        );
     }
 }
 export default Graph;

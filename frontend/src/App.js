@@ -36,6 +36,7 @@ class App extends Component {
                     <Graph
                         landmarks={this.state.landmarks}
                         poses={this.state.poses}
+                        isResult={this.state.isResult}
                     />
                     <SlamForm
                         formUpdateCallback={this.handleFormUpdateCallback}
@@ -47,6 +48,7 @@ class App extends Component {
     }
 
     handleFormSubmitCallback(response) {
+        console.log(response);
         let landmarks = [];
         let poses = [];
         Object.keys(response.result).forEach(function(key) {
@@ -88,7 +90,7 @@ class App extends Component {
                 landmarks.push({
                     id: value.key,
                     x: value.estimate[0],
-                    y: value.estimate[1],
+                    y: value.estimate[1]
                 });
             }
         });
