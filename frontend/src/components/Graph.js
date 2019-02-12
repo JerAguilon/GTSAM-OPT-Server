@@ -26,7 +26,7 @@ class Graph extends Component {
             let label = nodes[i].id;
             let coords = {
                 x: nodes[i].x,
-                y: nodes[i].y,
+                y: -nodes[i].y,
             }
             if (nodes[i].hasOwnProperty('theta')) {
                 nodes[i].theta = parseFloat(nodes[i].theta).toFixed(2);
