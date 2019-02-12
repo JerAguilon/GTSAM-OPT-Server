@@ -298,9 +298,9 @@ class SlamForm extends Component {
             let varId = i;
             let name = 'betweenPoseFactors[' + varId.toString() + ']';
             let new_component = (
-                <>
+                <div key={'betweenPoseKey' + i.toString()}>
                    <h5>Between Factor {(i + 1).toString()}</h5>
-                    <div key={i.toString()} className="row">
+                    <div key={'betweenPose1' + i.toString()} className="row">
                       <div className="input-field col s6">
                           <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
                           <label>Variable 1</label>
@@ -310,7 +310,7 @@ class SlamForm extends Component {
                           <label>Variable 2</label>
                       </div>
                     </div>
-                    <div key={i.toString()} className="row">
+                    <div key={'betweenPose2' + i.toString()} className="row">
                       <div className="input-field col s4">
                           <Field name={name + ".pose[0]"} component="input" placeholder="x" />
                           <label>x</label>
@@ -324,7 +324,7 @@ class SlamForm extends Component {
                           <label>theta</label>
                       </div>
                     </div>
-                </>
+                </div>
 
             );
             output.push(new_component);
@@ -339,9 +339,9 @@ class SlamForm extends Component {
             let varId = i;
             let name = 'bearingRangeFactors.[' + varId.toString() + ']';
             let new_component = (
-                <>
+                <div key={'measurement' + i.toString()} className="row">
                     <h5>Measurement {(i + 1).toString()}</h5>
-                    <div key={i.toString()} className="row">
+                    <div className="row">
                       <div className="input-field col s6">
                           <Field name={name + ".connections[0]"} component="input" placeholder="var1" />
                           <label for={name + ".connections[0]"}>Variable 1</label>
@@ -366,7 +366,7 @@ class SlamForm extends Component {
                           <label for={name + ".range"}>Range</label>
                       </div>
                     </div>
-                </>
+                </div>
 
             );
             output.push(new_component);
@@ -381,7 +381,7 @@ class SlamForm extends Component {
             let varId = i;
             let name = 'symbols[' + varId.toString() + ']';
             let new_component = (
-                <div key={i.toString()}>
+                <div key={ 'pose' + i.toString()}>
                   <h5>Pose <code>x{i + 1}</code></h5>
                   <Field name={name + ".estimate[0]"} component="input" placeholder="x" />
                   <label>x</label>
@@ -404,7 +404,7 @@ class SlamForm extends Component {
             let varId = i;
             let name = 'symbols[' + varId.toString() + ']';
             let new_component = (
-                <div key={i.toString()}>
+                <div key={'symbol' + i.toString()}>
                   <h5>Landmark <code>l{i + 1}</code></h5>
                   <label>x</label>
                   <Field name={name + ".estimate[0]"} component="input" placeholder="x" />

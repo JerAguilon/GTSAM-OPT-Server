@@ -30,6 +30,8 @@ class App extends Component {
     }
 
     render() {
+        console.log("RENDERING");
+        console.log(this.state);
         return (
             <div className="App">
                 <header className="App-header">
@@ -37,7 +39,6 @@ class App extends Component {
                         landmarks={this.state.landmarks}
                         poses={this.state.poses}
                     />
-                    <SampleGraph />
                     <SlamForm
                         formUpdateCallback={this.handleFormUpdateCallback}
                         formSubmitCallback={this.handleFormSubmitCallback}
@@ -48,8 +49,6 @@ class App extends Component {
     }
 
     handleFormSubmitCallback(response) {
-        console.log("SUBMITTED");
-        console.log(response);
         let landmarks = [];
         let poses = [];
         Object.keys(response.result).forEach(function(key) {
@@ -73,40 +72,34 @@ class App extends Component {
             landmarks: landmarks,
             poses: poses
         });
-        console.log("STATE:");
-        console.log(this.state);
+        this.forceUpdate();
     }
 
     handleFormUpdateCallback(values) {
-        console.log("Updated");
-        console.log(values);
         let landmarks = [];
         let poses = [];
         values.symbols.forEach(function(value) {
             if (value.type === "pose") {
-                landmarks.push({
-                    id: value.key,
-                    x: value.estimate[0],
-                    y: value.estimate[1]
-                });
-            } else {
                 poses.push({
                     id: value.key,
                     x: value.estimate[0],
                     y: value.estimate[1],
                     theta: value.estimate[2]
                 });
+            } else {
+                landmarks.push({
+                    id: value.key,
+                    x: value.estimate[0],
+                    y: value.estimate[1],
+                });
             }
         });
-        console.log(landmarks);
-        console.log(poses);
         this.setState({
             isResult: false,
             landmarks: landmarks,
             poses: poses
         });
-        console.log("STATE:");
-        console.log(this.state);
+        this.forceUpdate();
     }
 }
 
