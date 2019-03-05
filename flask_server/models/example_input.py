@@ -8,6 +8,7 @@ class SymbolType(Enum):
     POSE = "pose"
     POINT = "point"
 
+
 class SymbolRequest(object):
     def __init__(self, estimate, type):
         self.type = type
@@ -18,6 +19,7 @@ class SymbolRequest(object):
             return gtsam.Pose2(*self.estimate)
         if self.type == SymbolType.POINT:
             return gtsam.Point2(*self.estimate)
+
 
 class BetweenFactorRequest(object):
     def __init__(self, var1, var2, pose, odometry_noise):
@@ -33,6 +35,7 @@ class BetweenFactorRequest(object):
             gtsam.Pose2(*self.pose),
             self.odometry_noise,
         )
+
 
 class BearingRangeFactorRequest(object):
     def __init__(self, var1, var2, bearing, range, measurement_noise):
@@ -51,6 +54,7 @@ class BearingRangeFactorRequest(object):
             self.measurement_noise,
         )
 
+
 class SLAMRequest(object):
     def __init__(
         self,
@@ -66,8 +70,8 @@ class SLAMRequest(object):
         self.bearing_range_factors = bearing_range_factors
         self.initial_estimates = initial_estimates
 
-    @staticmethod
-    def from_request(request):
+    @classmethod
+    def from_request(cls, request):
         prior_noise = request['prior_noise']
         prior_noise = gtsam.noiseModel_Diagonal.Sigmas(
             np.array(prior_noise))
@@ -95,8 +99,11 @@ class SLAMRequest(object):
             key = prior['key']
             prior_val = prior['prior']
             priors.append(
-                gtsam.PriorFactorPose2(unknowns[key], gtsam.Pose2(*prior_val), prior_noise)
-            )
+                gtsam.PriorFactorPose2(
+                    unknowns[key],
+                    gtsam.Pose2(
+                        *prior_val),
+                    prior_noise))
 
         between_pose_factors_request = request['between_pose_factors']
         between_pose_factors = []
@@ -111,7 +118,6 @@ class SLAMRequest(object):
                 odometry_noise=odometry_noise
             ).get_factor()
             between_pose_factors.append(factor)
-
 
         bearing_range_factors_request = request['bearing_range_factors']
         bearing_range_factors = []
@@ -140,7 +146,7 @@ class SLAMRequest(object):
                 raise Exception("Invalid type")
             initial_estimates[variable] = estimate
 
-        return SLAMRequest(
+        return cls(
             unknowns,
             priors,
             between_pose_factors,
@@ -160,9 +166,10 @@ class FixedLagSmoothRequest(object):
         self.prior_mean = prior_mean
         self.prior_noise = prior_noise
 
-    @staticmethod
-    def from_request(request):
+    @classmethod
+    def from_request(cls, request):
         return None
+
 
 class FixedLagSmoothObservation(object):
     def __init__(
@@ -174,15 +181,16 @@ class FixedLagSmoothObservation(object):
         odometry_noise
     ):
         if len(odometry_measurements) != len(odometry_noise):
-            raise ValueError("Length of odometry measurements and noise must be equal")
+            raise ValueError(
+                "Length of odometry measurements and noise must be equal")
         self.time = time
         self.previous_key = previous_key
         self.current_key = current_key
         self.odometry_measurements = odometry_measurements
         self.odometry_noise = odometry_noise
 
-    @staticmethod
-    def from_request(request):
+    @classmethod
+    def from_request(cls, request):
         return None
 
 
@@ -220,7 +228,7 @@ DEFAULT_ARGS_DICT = {
     "priors": [
         {
             "key": "x1",
-            "prior": [0,0,0]
+            "prior": [0, 0, 0]
         }
     ],
     "between_pose_factors": [

@@ -36,19 +36,16 @@ def BatchFixedLagSmootherExample():
     speed.
     """
 
-
     # Define a batch fixed lag smoother, which uses
     # Levenberg-Marquardt to perform the nonlinear optimization
     lag = 2.0
     smoother_batch = gtsam_unstable.BatchFixedLagSmoother(lag)
-
 
     # Create containers to store the factors and linearization points
     # that will be sent to the smoothers
     new_factors = gtsam.NonlinearFactorGraph()
     new_values = gtsam.Values()
     new_timestamps = gtsam_unstable.FixedLagSmootherKeyTimestampMap()
-
 
     # Create  a prior on the first pose, placing it at the origin
     prior_mean = gtsam.Pose2(0, 0, 0)
@@ -76,15 +73,18 @@ def BatchFixedLagSmootherExample():
         current_pose = gtsam.Pose2(time * 2, 0, 0)
         new_values.insert(current_key, current_pose)
 
-        # Add odometry factors from two different sources with different error stats
+        # Add odometry factors from two different sources with different error
+        # stats
         odometry_measurement_1 = gtsam.Pose2(0.61, -0.08, 0.02)
-        odometry_noise_1 = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.1, 0.1, 0.05]))
+        odometry_noise_1 = gtsam.noiseModel_Diagonal.Sigmas(
+            np.array([0.1, 0.1, 0.05]))
         new_factors.push_back(gtsam.BetweenFactorPose2(
             previous_key, current_key, odometry_measurement_1, odometry_noise_1
         ))
 
         odometry_measurement_2 = gtsam.Pose2(0.47, 0.03, 0.01)
-        odometry_noise_2 = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.05, 0.05, 0.05]))
+        odometry_noise_2 = gtsam.noiseModel_Diagonal.Sigmas(
+            np.array([0.05, 0.05, 0.05]))
         new_factors.push_back(gtsam.BetweenFactorPose2(
             previous_key, current_key, odometry_measurement_2, odometry_noise_2
         ))
@@ -99,8 +99,8 @@ def BatchFixedLagSmootherExample():
         new_values.clear()
         new_factors.resize(0)
 
-
         time += delta_time
+
 
 def init_smoother(request):
     """
@@ -120,7 +120,6 @@ def init_smoother(request):
     new_factors = gtsam.NonlinearFactorGraph()
     new_values = gtsam.Values()
     new_timestamps = gtsam_unstable.FixedLagSmootherKeyTimestampMap()
-
 
     # Create  a prior on the first pose, placing it at the origin
     prior_mean = request.prior_mean
@@ -163,13 +162,14 @@ def record_observation(observation):
 
     new_values.insert(current_key, current_pose)
 
-    # Add odometry factors from two different sources with different error stats
+    # Add odometry factors from two different sources with different error
+    # stats
 
-    for measurement, noise in zip(observation.odometry_measurements, observation.odometry_noise):
+    for measurement, noise in zip(
+            observation.odometry_measurements, observation.odometry_noise):
         new_factors.push_back(gtsam.BetweenFactorPose2(
             previous_key, current_key, measurement, noise
         ))
-
 
     # odometry_measurement_1 = gtsam.Pose2(0.61, -0.08, 0.02)
     # odometry_noise_1 = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.1, 0.1, 0.05]))

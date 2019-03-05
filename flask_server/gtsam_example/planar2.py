@@ -26,7 +26,8 @@ def run(slam_request=DEFAULT_REQUEST):
     # Create the keys corresponding to unknown variables in the factor graph
     unknowns = slam_request.symbols
 
-    # Add a prior on pose X1 at the origin. A prior factor consists of a mean and a noise model
+    # Add a prior on pose X1 at the origin. A prior factor consists of a mean
+    # and a noise model
     for prior in slam_request.priors:
         graph.add(prior)
 
@@ -55,10 +56,10 @@ def run(slam_request=DEFAULT_REQUEST):
     # Here we will use the default set of parameters.  See the
     # documentation for the full set of parameters.
     params = gtsam.LevenbergMarquardtParams()
-    optimizer = gtsam.LevenbergMarquardtOptimizer(graph, initial_estimate, params)
+    optimizer = gtsam.LevenbergMarquardtOptimizer(
+        graph, initial_estimate, params)
     result = optimizer.optimize()
     print("\nFinal Result:\n{}".format(result))
-
 
     output_estimations = {}
     reverse_lookup = dict(
@@ -66,11 +67,11 @@ def run(slam_request=DEFAULT_REQUEST):
     )
 
     for variable, initial_estimate in slam_request.initial_estimates.iteritems():
-        if type(initial_estimate) == gtsam.Pose2:
+        if isinstance(initial_estimate, gtsam.Pose2):
             pose = result.atPose2(variable)
             estimation = [pose.x(), pose.y(), pose.theta()]
 
-        elif type(initial_estimate) == gtsam.Point2:
+        elif isinstance(initial_estimate, gtsam.Point2):
             point = result.atPoint2(variable)
             estimation = [point.x(), point.y()]
         else:
@@ -91,4 +92,3 @@ def run(slam_request=DEFAULT_REQUEST):
         result=output_estimations,
         covariance=covariance_dict,
     )
-

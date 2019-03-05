@@ -25,6 +25,7 @@ CORS(app)
 
 api = CustomApi(app)
 
+
 class SlamExample(Resource):
 
     @use_args(
@@ -36,7 +37,16 @@ class SlamExample(Resource):
         result = planar2.run(request).serialize()
         return result
 
+
+class FixedLagSmoother(Resource):
+
+    def post(self, args):
+        return {}
+
+
 api.add_resource(SlamExample, '/')
+api.add_resource(SlamExample, '/fixedLagSmoother')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

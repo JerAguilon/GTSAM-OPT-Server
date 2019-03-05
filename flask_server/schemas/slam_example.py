@@ -7,8 +7,9 @@ def _validate_symbol_type(type):
     try:
         SymbolType(type)
         return True
-    except:
+    except BaseException:
         return False
+
 
 class BetweenPoseFactorSchema(Schema):
     connections = fields.List(
@@ -23,7 +24,7 @@ class BetweenPoseFactorSchema(Schema):
     )
 
     class Meta:
-        strict=True
+        strict = True
 
 
 class BearingRangeFactorSchema(Schema):
@@ -40,7 +41,7 @@ class BearingRangeFactorSchema(Schema):
     )
 
     class Meta:
-        strict=True
+        strict = True
 
 
 class PriorSchema(Schema):
@@ -55,7 +56,7 @@ class PriorSchema(Schema):
     )
 
     class Meta:
-        strict=True
+        strict = True
 
 
 class SymbolSchema(Schema):
@@ -74,7 +75,7 @@ class SymbolSchema(Schema):
     )
 
     class Meta:
-        strict=True
+        strict = True
 
 
 class PostSlamSchema(Schema):
@@ -122,4 +123,4 @@ class PostSlamSchema(Schema):
     )
 
     class Meta:
-        strict=True
+        strict = True
