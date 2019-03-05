@@ -132,6 +132,7 @@ def init_smoother(request):
 
     SMOOTHER_BATCH.update(new_factors, new_values, new_timestamps)
     SMOOTHER_BATCH = smoother_batch
+    return X1
 
 
 def record_observation(observation):

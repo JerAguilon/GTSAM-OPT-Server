@@ -148,6 +148,44 @@ class SLAMRequest(object):
             initial_estimates
         )
 
+
+class FixedLagSmoothRequest(object):
+    def __init__(
+        self,
+        lag,
+        prior_mean,
+        prior_noise,
+    ):
+        self.lag = lag
+        self.prior_mean = prior_mean
+        self.prior_noise = prior_noise
+
+    @staticmethod
+    def from_request(request):
+        return None
+
+class FixedLagSmoothObservation(object):
+    def __init__(
+        self,
+        time,
+        previous_key,
+        current_key,
+        odometry_measurements,
+        odometry_noise
+    ):
+        if len(odometry_measurements) != len(odometry_noise):
+            raise ValueError("Length of odometry measurements and noise must be equal")
+        self.time = time
+        self.previous_key = previous_key
+        self.current_key = current_key
+        self.odometry_measurements = odometry_measurements
+        self.odometry_noise = odometry_noise
+
+    @staticmethod
+    def from_request(request):
+        return None
+
+
 DEFAULT_ARGS_DICT = {
     "prior_noise": [.3, .3, .1],
     "odometry_noise": [.2, .2, .1],
