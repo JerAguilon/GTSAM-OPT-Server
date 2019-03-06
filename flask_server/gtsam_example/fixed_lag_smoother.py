@@ -16,6 +16,8 @@ import numpy as np
 import gtsam
 import gtsam_unstable
 
+from models.example_output import FixedLagSmootherOutput
+
 
 SMOOTHER_BATCH = None
 
@@ -24,6 +26,9 @@ def _timestamp_key_value(key, value):
     """
     Creates a key value pair for a FixedLagSmootherKeyTimeStampMap
     """
+
+    if (type(key) == float):
+        key = int(key)
     return gtsam_unstable.FixedLagSmootherKeyTimestampMapValue(
         key, value
     )
@@ -129,8 +134,8 @@ def init_smoother(request):
     new_values.insert(X1, prior_mean)
     new_timestamps.insert(_timestamp_key_value(X1, 0.0))
 
-    SMOOTHER_BATCH.update(new_factors, new_values, new_timestamps)
     SMOOTHER_BATCH = smoother_batch
+    SMOOTHER_BATCH.update(new_factors, new_values, new_timestamps)
     return X1
 
 
@@ -147,7 +152,7 @@ def record_observation(observation):
     # In each iteration, the agent moves at a constant speed
     # and its two odometers measure the change.
     previous_key = observation.previous_key
-    current_key = observation.key
+    current_key = observation.current_key
     # previous_key = 1000 * (time - delta_time)
     # current_key = 1000 * time
 
@@ -171,20 +176,11 @@ def record_observation(observation):
             previous_key, current_key, measurement, noise
         ))
 
-    # odometry_measurement_1 = gtsam.Pose2(0.61, -0.08, 0.02)
-    # odometry_noise_1 = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.1, 0.1, 0.05]))
-    # new_factors.push_back(gtsam.BetweenFactorPose2(
-    #     previous_key, current_key, odometry_measurement_1, odometry_noise_1
-    # ))
-
-    # odometry_measurement_2 = gtsam.Pose2(0.47, 0.03, 0.01)
-    # odometry_noise_2 = gtsam.noiseModel_Diagonal.Sigmas(np.array([0.05, 0.05, 0.05]))
-    # new_factors.push_back(gtsam.BetweenFactorPose2(
-    #     previous_key, current_key, odometry_measurement_2, odometry_noise_2
-    # ))
 
     # Update the smoothers with the new factors
     SMOOTHER_BATCH.update(new_factors, new_values, new_timestamps)
+    pose = SMOOTHER_BATCH.calculateEstimatePose2(current_key)
 
-    print("Timestamp = " + str(time) + ", Key = " + str(current_key))
-    print(SMOOTHER_BATCH.calculateEstimatePose2(current_key))
+    output = FixedLagSmootherOutput(current_key, pose)
+    return output
+

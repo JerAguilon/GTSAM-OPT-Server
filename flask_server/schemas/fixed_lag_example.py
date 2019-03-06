@@ -2,6 +2,9 @@ from marshmallow import Schema, fields, validate
 
 
 class PostFixedLagSmootherRequestsSchema(Schema):
+    lag = fields.Float(
+        required=True
+    )
     prior_mean = fields.List(
         fields.Float,
         validate=validate.Length(equal=3),
@@ -26,6 +29,12 @@ class PostFixedLagSmootherObservationsSchema(Schema):
     )
     current_key = fields.Integer(
         load_from="currentKey",
+        required=True,
+    )
+    current_pose = fields.List(
+        fields.Float,
+        validate=validate.Length(equal=3),
+        load_from="currentPose",
         required=True,
     )
     odometry_measurements = fields.List(

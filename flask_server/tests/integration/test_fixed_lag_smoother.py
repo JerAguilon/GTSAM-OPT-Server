@@ -22,10 +22,29 @@ def test_fixed_lag_smoother(client):
             ('currentKey', time),
             ('time', time/1000),
             ('odometryMeasurements', odometry_measurements),
-            ('odometryNoise', odometry_noise)
+            ('odometryNoise', odometry_noise),
+            ('currentPose', [time * 2 / 1000, 0, 0])
         ))
-        for time in range(25, 501, 25) # ranges from [0.25, 5.00]
+        for time in range(25, 301, 25) # ranges from [0.25, 3.00]
     ]
+
+    response = client.post(
+        '/fixedLagSmoother/requests',
+        json=initial_request
+    )
+
+    assert response.get_json() == {
+        'key': 0
+    }
+
+    for update in updates:
+        response = client.post(
+            '/fixedLagSmoother/observations',
+            json=update
+        )
+        print(response.get_json())
+
+    raise Exception()
 
     print(initial_request)
     print(updates)

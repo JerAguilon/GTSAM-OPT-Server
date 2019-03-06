@@ -155,7 +155,7 @@ class SLAMRequest(object):
         )
 
 
-class FixedLagSmoothRequest(object):
+class FixedLagSmootherRequest(object):
     def __init__(
         self,
         lag,
@@ -168,6 +168,7 @@ class FixedLagSmoothRequest(object):
 
     @classmethod
     def from_request(cls, request):
+        lag = request['lag']
         prior_mean = request['prior_mean']
         prior_mean = gtsam.Pose2(
             *prior_mean
@@ -176,15 +177,16 @@ class FixedLagSmoothRequest(object):
         prior_noise = request['prior_noise']
         prior_noise = gtsam.noiseModel_Diagonal.Sigmas(
             np.array(prior_noise))
-        return cls(prior_mean, prior_noise)
+        return cls(lag, prior_mean, prior_noise)
 
 
-class FixedLagSmoothObservation(object):
+class FixedLagSmootherObservation(object):
     def __init__(
         self,
         time,
         previous_key,
         current_key,
+        current_pose,
         odometry_measurements,
         odometry_noise
     ):
@@ -194,15 +196,17 @@ class FixedLagSmoothObservation(object):
         self.time = time
         self.previous_key = previous_key
         self.current_key = current_key
+        self.current_pose = current_pose
         self.odometry_measurements = odometry_measurements
         self.odometry_noise = odometry_noise
 
     @classmethod
     def from_request(cls, request):
-        time = request['time'],
-        previous_key = request['previous_key'],
-        current_key = request['current_key'],
+        time = request['time']
+        previous_key = request['previous_key']
+        current_key = request['current_key']
 
+        current_pose = gtsam.Pose2(*request['current_pose'])
 
         odometry_measurements = []
         odometry_noise = []
@@ -214,11 +218,11 @@ class FixedLagSmoothObservation(object):
             odometry_noise.append(
                 gtsam.noiseModel_Diagonal.Sigmas(np.array(n))
             )
-
         return cls(
             time,
             previous_key,
             current_key,
+            current_pose,
             odometry_measurements,
             odometry_noise,
         )

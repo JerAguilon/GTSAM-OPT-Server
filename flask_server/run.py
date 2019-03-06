@@ -4,10 +4,10 @@ from flask_restful import Resource, Api
 from webargs.flaskparser import use_args
 
 
-from gtsam_example import planar2
+from gtsam_example import planar2, fixed_lag_smoother
 from schemas.slam_example import PostSlamSchema
 from schemas.fixed_lag_example import PostFixedLagSmootherRequestsSchema, PostFixedLagSmootherObservationsSchema
-from models.example_input import SLAMRequest
+from models.example_input import SLAMRequest, FixedLagSmootherObservation, FixedLagSmootherRequest
 
 
 class CustomApi(Api):
@@ -46,7 +46,11 @@ class FixedLagSmootherRequests(Resource):
         locations=('json', 'form'),
     )
     def post(self, args):
-        return {}
+        request = FixedLagSmootherRequest.from_request(args)
+        key = fixed_lag_smoother.init_smoother(request)
+        return {
+            'key': key,
+        }
 
 class FixedLagSmootherObservations(Resource):
 
@@ -55,7 +59,9 @@ class FixedLagSmootherObservations(Resource):
         locations=('json', 'form'),
     )
     def post(self, args):
-        return {}
+        request = FixedLagSmootherObservation.from_request(args)
+        result = fixed_lag_smoother.record_observation(request)
+        return result.serialize()
 
 
 api.add_resource(SlamExample, '/')
