@@ -168,7 +168,15 @@ class FixedLagSmoothRequest(object):
 
     @classmethod
     def from_request(cls, request):
-        return None
+        prior_mean = request['prior_mean']
+        prior_mean = gtsam.Pose2(
+            *prior_mean
+        )
+
+        prior_noise = request['prior_noise']
+        prior_noise = gtsam.noiseModel_Diagonal.Sigmas(
+            np.array(prior_noise))
+        return cls(prior_mean, prior_noise)
 
 
 class FixedLagSmoothObservation(object):
@@ -191,7 +199,29 @@ class FixedLagSmoothObservation(object):
 
     @classmethod
     def from_request(cls, request):
-        return None
+        time = request['time'],
+        previous_key = request['previous_key'],
+        current_key = request['current_key'],
+
+
+        odometry_measurements = []
+        odometry_noise = []
+
+        for m in request['odometry_measurements']:
+            odometry_measurements.append(gtsam.Pose2(*m))
+
+        for n in request['odometry_noise']:
+            odometry_noise.append(
+                gtsam.noiseModel_Diagonal.Sigmas(np.array(n))
+            )
+
+        return cls(
+            time,
+            previous_key,
+            current_key,
+            odometry_measurements,
+            odometry_noise,
+        )
 
 
 DEFAULT_ARGS_DICT = {
