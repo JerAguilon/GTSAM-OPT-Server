@@ -6,6 +6,7 @@ from webargs.flaskparser import use_args
 
 from gtsam_example import planar2
 from schemas.slam_example import PostSlamSchema
+from schemas.fixed_lag_example import PostFixedLagSmootherRequestsSchema, PostFixedLagSmootherObservationsSchema
 from models.example_input import SLAMRequest
 
 
@@ -38,14 +39,28 @@ class SlamExample(Resource):
         return result
 
 
-class FixedLagSmoother(Resource):
+class FixedLagSmootherRequests(Resource):
 
+    @use_args(
+        PostFixedLagSmootherRequestsSchema(),
+        locations=('json', 'form'),
+    )
+    def post(self, args):
+        return {}
+
+class FixedLagSmootherObservations(Resource):
+
+    @use_args(
+        PostFixedLagSmootherObservationsSchema(),
+        locations=('json', 'form'),
+    )
     def post(self, args):
         return {}
 
 
 api.add_resource(SlamExample, '/')
-api.add_resource(SlamExample, '/fixedLagSmoother')
+api.add_resource(FixedLagSmootherRequests, '/fixedLagSmoother/requests')
+api.add_resource(FixedLagSmootherObservations, '/fixedLagSmoother/observations')
 
 
 if __name__ == '__main__':
