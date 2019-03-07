@@ -20,6 +20,7 @@ from models.example_output import FixedLagSmootherOutput
 
 
 SMOOTHER_BATCH = None
+FACTOR_GRAPH = None
 
 
 def _timestamp_key_value(key, value):
@@ -113,7 +114,7 @@ def init_smoother(request):
     sensors that is simply moving along the x axis in constant
     speed.
     """
-    global SMOOTHER_BATCH
+    global SMOOTHER_BATCH, FACTOR_GRAPH
 
     # Define a batch fixed lag smoother, which uses
     # Levenberg-Marquardt to perform the nonlinear optimization
@@ -136,11 +137,15 @@ def init_smoother(request):
 
     SMOOTHER_BATCH = smoother_batch
     SMOOTHER_BATCH.update(new_factors, new_values, new_timestamps)
+
+    FACTOR_GRAPH = new_factors
+
     return X1
 
 
 def record_observation(observation):
-    new_factors = gtsam.NonlinearFactorGraph()
+    global FACTOR_GRAPH, SMOOTHER_BATCH
+
     new_values = gtsam.Values()
     new_timestamps = gtsam_unstable.FixedLagSmootherKeyTimestampMap()
 
@@ -172,15 +177,16 @@ def record_observation(observation):
 
     for measurement, noise in zip(
             observation.odometry_measurements, observation.odometry_noise):
-        new_factors.push_back(gtsam.BetweenFactorPose2(
+        FACTOR_GRAPH.push_back(gtsam.BetweenFactorPose2(
             previous_key, current_key, measurement, noise
         ))
 
 
     # Update the smoothers with the new factors
-    SMOOTHER_BATCH.update(new_factors, new_values, new_timestamps)
+    SMOOTHER_BATCH.update(FACTOR_GRAPH, new_values, new_timestamps)
     pose = SMOOTHER_BATCH.calculateEstimatePose2(current_key)
 
     output = FixedLagSmootherOutput(current_key, pose)
+    FACTOR_GRAPH.resize(0)
     return output
 
